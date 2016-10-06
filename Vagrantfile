@@ -68,7 +68,10 @@ config.vm.provision "shell", inline: <<-SHELL
    pacman --noconfirm -Syy
    pacman --noconfirm -S openvpn nginx postgresql python-psycopg2 python-django
    ln -s /vagrant/deployconfig.sh /usr/local/bin/
+   ln -s /vagrant/rmconfig.sh /usr/local/bin/
    groupadd openvpn
+   usermod -a -G openvpn vagrant
    echo "%openvpn ALL=(ALL) NOPASSWD: /usr/local/bin/deployconfig.sh" >> /etc/sudoers
+   echo "%openvpn ALL=(ALL) NOPASSWD: /usr/local/bin/rmconfig.sh" >> /etc/sudoers
 SHELL
 end

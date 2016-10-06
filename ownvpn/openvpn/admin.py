@@ -1,3 +1,7 @@
 from django.contrib import admin
+from openvpn.models import OpenvpnClient
+from openvpn.models import OpenvpnServer
 
-# Register your models here.
+admin.site.register(OpenvpnClient)
+admin.site.register(OpenvpnServer)
+
