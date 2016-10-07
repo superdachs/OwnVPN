@@ -1,4 +1,5 @@
 from django.db import models
+from django.core import serializers
 
 import subprocess
 import os
@@ -38,6 +39,9 @@ class Openvpn(models.Model):
         cmd = "sudo /usr/local/bin/controlvpn.sh %s %s" % (self.config, command)
         p = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
         p.wait() 
+
+    def getjson(self):
+        return serializers.serialize("json", self)
 
 class OpenvpnClient(Openvpn):
     gateway = models.CharField(max_length=255)
