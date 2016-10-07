@@ -7,3 +7,7 @@ Webfrontend for VPN Gateway
 - Start/Stop VPNs
 - Make VPNs persistant
 ....
+
+
+automatic key generation 
+only static keys at the moment
