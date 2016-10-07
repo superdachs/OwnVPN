@@ -28,9 +28,14 @@ class Openvpn(models.Model):
     description = models.TextField(blank=True, null=True)
     port = models.IntegerField(default=1194)
     tun_ip = models.GenericIPAddressField()
+    config = models.CharField(max_length=255, blank=True, null=True, editable=False)
+    start_on_boot = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
+
+    def control(self, command):
+        cmd = "sudo /usr/local/bin/controlvpn.sh %s %s" % (self.config, command)
 
 class OpenvpnClient(Openvpn):
     gateway = models.CharField(max_length=255)
@@ -56,6 +61,11 @@ class OpenvpnClient(Openvpn):
         if p.wait() != 0:
             raise Exception("could not deploy config and/or key file(s)")
 
+        self.config = "client-%s" % self.name
+
+        if self.start_on_boot:
+            self.control("enable")
+
         super(OpenvpnClient, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
@@ -64,9 +74,16 @@ class OpenvpnClient(Openvpn):
         if p.wait() != 0:
             raise Exception("could not delete config and/or key file(s)")
 
-        super(OpenvpnClient, self).delete(*args, **kwargs)
+        try:
+            self.control("stop")
+        except:
+            pass
+        try:
+            self.control("disable")
+        except:
+            pass
 
-        
+        super(OpenvpnClient, self).delete(*args, **kwargs)
 
 class OpenvpnServer(Openvpn):
     client_ip = models.GenericIPAddressField()
@@ -85,11 +102,15 @@ class OpenvpnServer(Openvpn):
             cf.write("ifconfig %s %s" % (self.tun_ip, self.client_ip))
             cf.write("secret server-%s.key" % self.name)
 
-
         deploycmd = "sudo /usr/local/bin/deployconfig.sh server-%s" % self.name
         p = subprocess.Popen(deploycmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
         if p.wait() != 0:
             raise Exception("could not deploy config and/or key file(s)")
+
+        self.config = "server-%s" % self.name
+
+        if self.start_on_boot:
+            self.control("enable")
 
         super(OpenvpnServer, self).save(*args, **kwargs)
 
@@ -98,6 +119,15 @@ class OpenvpnServer(Openvpn):
         p = subprocess.Popen(rmcmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
         if p.wait() != 0:
             raise Exception("could not delete config and/or key file(s)")
+
+        try:
+            self.control("stop")
+        except:
+            pass
+        try:
+            self.control("disable")
+        except:
+            pass
 
         super(OpenvpnServer, self).delete(*args, **kwargs)
 
