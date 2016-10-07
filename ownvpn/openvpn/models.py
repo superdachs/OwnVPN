@@ -67,6 +67,8 @@ class OpenvpnClient(Openvpn):
 
         if self.start_on_boot:
             self.control("enable")
+        else:
+            self.control("disable")
 
         super(OpenvpnClient, self).save(*args, **kwargs)
 
@@ -113,6 +115,8 @@ class OpenvpnServer(Openvpn):
 
         if self.start_on_boot:
             self.control("enable")
+        else:
+            self.control("disable")
 
         super(OpenvpnServer, self).save(*args, **kwargs)
 

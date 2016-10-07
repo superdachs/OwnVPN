@@ -3,5 +3,5 @@
 CONF=$1
 COMMAND=$2
 
-systemctl $COMMAND openvpn@$CONF
+/usr/bin/systemctl $COMMAND openvpn@$CONF
 
