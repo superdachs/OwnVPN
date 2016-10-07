@@ -36,6 +36,8 @@ class Openvpn(models.Model):
 
     def control(self, command):
         cmd = "sudo /usr/local/bin/controlvpn.sh %s %s" % (self.config, command)
+        p = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
+        p.wait() 
 
 class OpenvpnClient(Openvpn):
     gateway = models.CharField(max_length=255)
