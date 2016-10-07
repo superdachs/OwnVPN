@@ -12,7 +12,6 @@ class Tools():
         # create key
         tmpkeyname = str(uuid.uuid4())
         keycmd = "openvpn --genkey --secret /tmp/%s.key" % tmpkeyname
-        print(keycmd)
         p = subprocess.Popen(keycmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
         if p.wait() != 0:
             raise Exception("could not create temp key")
