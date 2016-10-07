@@ -4,6 +4,25 @@ import subprocess
 import os
 import uuid
 
+class Tools():
+
+    def create_key():
+
+        # create key
+        tmpkeyname = str(uuid.uuid4())
+        keycmd = "openvpn --genkey --secret /tmp/%s.key" % tmpkeyname
+        print(keycmd)
+        p = subprocess.Popen(keycmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
+        if p.wait() != 0:
+            raise Exception("could not create temp key")
+        with open("/tmp/%s.key" % tmpkeyname, 'r') as tmpk:
+            key = tmpk.readlines()
+        os.remove("/tmp/%s.key" % tmpkeyname)
+
+
+        return key
+
+
 class Openvpn(models.Model):
     name = models.CharField(max_length=255, unique=True)
     description = models.TextField(blank=True, null=True)
@@ -52,28 +71,11 @@ class OpenvpnClient(Openvpn):
 
         super(OpenvpnClient, self).delete(*args, **kwargs)
 
+        
+
 class OpenvpnServer(Openvpn):
     client_ip = models.GenericIPAddressField()
-    static_key = models.TextField()
-
-    tmpkeyname = None
-
-    def __init__(self):
- 
-        # create key
-        # TODO: remove temp key file also if object was not been saved
-        self.tmpkeyname = str(uuid.uuid4())
-        if not self.static_key:
-            keycmd = "openvpn --genkey --secure /tmp/%s.key" % self.tmpkeyname
-            p = subprocess.Popen(keycmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
-            if p.wait() != 0:
-                raise Exception("could not create temp key")
-            with open("/tmp/%s.key" % self.tmpkeyname, 'r') as tmpk:
-                self.static_key = tmpk.readlines()
-            os.remove("/tmp/%s.key" % self.tmpkeyname)
-
-
-
+    static_key = models.TextField(default=Tools.create_key())
 
 
 
