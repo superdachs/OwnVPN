@@ -21,5 +21,5 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^list_vpns/', core.views.list_vpns),
     url(r'^vpn/(?P<vpn_type>[\w]+)/(?P<vpn_pk>[0-9]+)/', core.views.edit_vpn),
-    url(r'^$', 'core.views.start', name='start'),
+    url(r'^$', core.views.start),
 ]

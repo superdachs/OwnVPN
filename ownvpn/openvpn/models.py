@@ -46,6 +46,7 @@ class OpenvpnClient(Openvpn):
     gateway = models.CharField(max_length=255)
     server_ip = models.GenericIPAddressField()
     static_key = models.TextField()
+    vpn_type = "openvpn_client"
 
     def save(self, *args, **kwargs):
         configfile = "/tmp/client-%s.conf" % self.name
@@ -95,6 +96,8 @@ class OpenvpnClient(Openvpn):
 class OpenvpnServer(Openvpn):
     client_ip = models.GenericIPAddressField()
     static_key = models.TextField(default=Tools.create_key())
+    vpn_type = "openvpn_server"
+
 
     def save(self, *args, **kwargs):
         configfile = "/tmp/server-%s.conf" % self.name
