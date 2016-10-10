@@ -1,5 +1,6 @@
-from django.shortcuts import render, render_to_response
+from django.shortcuts import render, render_to_response, get_object_or_404
 from openvpn.models import OpenvpnServer
+from openvpn.forms import OpenvpnServerForm
 
 def start(request):
     context = {}
@@ -12,10 +13,14 @@ def list_vpns(request):
             }
     return render_to_response('core/list_vpns.html', context)
 
-def edit_vpn(request, vpn_pk):
+def edit_vpn(request, vpn_type, vpn_pk):
 
-    vpn = OpenvpnServer.objects.get(pk=vpn_pk)
+    if vpn_type == "openvpn_server":
+        vpn = get_object_or_404(OpenvpnServer, pk=vpn_pk)
+        form = OpenvpnServerForm(instance=vpn)
 
+    context = {
+            'form': form,
+            }
+    return render_to_response('core/edit_vpn.html', context)
 
-
-    return None
