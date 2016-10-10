@@ -15,8 +15,11 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
+import core.views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^list_vpns/', core.views.list_vpns),
+    url(r'^vpn/(?P<vpn_pk>[0-9]+)/', core.views.edit_vpn),
     url(r'^$', 'core.views.start', name='start'),
 ]
