@@ -66,7 +66,14 @@ Vagrant.configure("2") do |config|
   # documentation for more information about their specific syntax and use.
 config.vm.provision "shell", inline: <<-SHELL
    pacman --noconfirm -Syy
-   pacman --noconfirm -S openvpn nginx postgresql python-psycopg2 python-django
+   pacman --noconfirm -S openvpn nginx postgresql python-django python-psycopg2 python2-appdirs python2-packaging python2-setuptools
+
+   sudo -u vagrant git clone https://aur.archlinux.org/python-django-rest-framework.git
+   cd python-django-rest-framework
+   sudo -u vagrant makepkg -cs
+   pacman --noconfirm -U `find . -name python-django-rest-framework-*.pkg.tar.xz`
+
+
    ln -s /vagrant/deployconfig.sh /usr/local/bin/
    ln -s /vagrant/rmconfig.sh /usr/local/bin/
    ln -s /vagrant/controlvpn.sh /usr/local/bin/
