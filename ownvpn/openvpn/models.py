@@ -21,6 +21,7 @@ class Tools():
 
         return ''.join(key)
 
+# TODO: make ports and localports systemwide unique
 
 class Openvpn(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -46,6 +47,7 @@ class OpenvpnClient(Openvpn):
     server_ip = models.GenericIPAddressField()
     static_key = models.TextField()
     vpn_type = "openvpn_client"
+    local_port = models.IntegerField(default=1194)
 
     def save(self, *args, **kwargs):
         configfile = "/tmp/client-%s.conf" % self.name
@@ -58,8 +60,9 @@ class OpenvpnClient(Openvpn):
             cf.write("remote %s\n" % self.gateway)
             cf.write("port %d\n" % self.port)
             cf.write("dev tun\n")
+            cf.write("lport %d\n" % self.local_port)
             cf.write("ifconfig %s %s\n" % (self.tun_ip, self.server_ip))
-            cf.write("secret client%s.key" % self.name)
+            cf.write("secret /etc/openvpn/client-%s.key" % self.name)
 
         deploycmd = "sudo /usr/local/bin/deployconfig.sh client-%s" % self.name
         p = subprocess.Popen(deploycmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
@@ -108,7 +111,7 @@ class OpenvpnServer(Openvpn):
             cf.write("port %d\n" % self.port)
             cf.write("dev tun\n") 
             cf.write("ifconfig %s %s\n" % (self.tun_ip, self.client_ip))
-            cf.write("secret server-%s.key\n" % self.name)
+            cf.write("secret /etc/openvpn/server-%s.key\n" % self.name)
 
         deploycmd = "sudo /usr/local/bin/deployconfig.sh server-%s" % self.name
         p = subprocess.Popen(deploycmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
