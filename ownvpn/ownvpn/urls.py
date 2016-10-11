@@ -22,16 +22,25 @@ from rest_framework import routers, serializers, viewsets
 class OpenvpnServerSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = OpenvpnServer
-        fields = ('name', 'description', 'tun_ip', 'static_key')
+        fields = '__all__'
 
 class OpenvpnServerViewSet(viewsets.ModelViewSet):
     queryset = OpenvpnServer.objects.all()
     serializer_class = OpenvpnServerSerializer
 
+class OpenvpnClientSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = OpenvpnClient
+        fields = '__all__'
+
+class OpenvpnClientViewSet(viewsets.ModelViewSet):
+    queryset = OpenvpnClient.objects.all()
+    serializer_class = OpenvpnClientSerializer
+
 
 router = routers.DefaultRouter()
 router.register(r'openvpnserver', OpenvpnServerViewSet)
-
+router.register(r'openvpnclient', OpenvpnClientViewSet)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),

@@ -107,8 +107,8 @@ class OpenvpnServer(Openvpn):
             cf.write("# for %s. Do not edit!\n" % self.name)
             cf.write("port %d\n" % self.port)
             cf.write("dev tun\n") 
-            cf.write("ifconfig %s %s" % (self.tun_ip, self.client_ip))
-            cf.write("secret server-%s.key" % self.name)
+            cf.write("ifconfig %s %s\n" % (self.tun_ip, self.client_ip))
+            cf.write("secret server-%s.key\n" % self.name)
 
         deploycmd = "sudo /usr/local/bin/deployconfig.sh server-%s" % self.name
         p = subprocess.Popen(deploycmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
