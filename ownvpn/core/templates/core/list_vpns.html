@@ -2,13 +2,13 @@
 <table id="list_vpn">
     <tr><th>Name</th><th>VPN IP</th><th>Port</th><th>Running</th><th>Autostart</th></tr>
     {% for vpn in vpn_servers %}
-    <tr><td><a href="/vpn/{{ vpn.vpn_type }}/{{ vpn.pk }}">{{ vpn.name }}</a></td><td>{{ vpn.tun_ip }}</td><td>{{ vpn.port }}</td><td>{{ TODO }}</td><td>{{ vpn.start_on_boot }}</td></tr>
+    <tr><td><a href="/vpn/{{ vpn.vpn_type }}/{{ vpn.pk }}">{{ vpn.name }}</a></td><td>{{ vpn.tun_ip }}</td><td>{{ vpn.bind_to.port }}</td><td>{{ TODO }}</td><td>{{ vpn.start_on_boot }}</td></tr>
     {% endfor %}
 </table>
 <h1 class="list_vpn_table_headline">Client</h1>
 <table id="list_vpn">
     <tr><th>Name</th><th>VPN IP</th><th>Port</th><th>Running</th><th>Autostart</th></tr>
     {% for vpn in vpn_clients %}
-    <tr><td><a href="/vpn/{{ vpn.vpn_type }}/{{ vpn.pk }}">{{ vpn.name }}</a></td><td>{{ vpn.tun_ip }}</td><td>{{ vpn.port }}</td><td>{{ TODO }}</td><td>{{ vpn.start_on_boot }}</td></tr>
+    <tr><td><a href="/vpn/{{ vpn.vpn_type }}/{{ vpn.pk }}">{{ vpn.name }}</a></td><td>{{ vpn.tun_ip }}</td><td>{{ vpn.bind_to.port }}</td><td>{{ TODO }}</td><td>{{ vpn.start_on_boot }}</td></tr>
     {% endfor %}
 </table>

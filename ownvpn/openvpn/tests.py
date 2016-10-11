@@ -1,11 +1,12 @@
 from django.test import TestCase
-from openvpn.models import OpenvpnServer, OpenvpnClient
+from openvpn.models import OpenvpnServer, OpenvpnClient, AddressPort
 from openvpn.models import Tools
 import subprocess
 
 class OpenvpnServerTestCase(TestCase):
     def setUp(self):
-        OpenvpnServer.objects.create(name='testserver', description='Keine Beschreibung', port=1194, tun_ip='10.0.0.1', start_on_boot=False, client_ip='10.0.0.2')
+        addressport = AddressPort.objects.create(port=1194)
+        OpenvpnServer.objects.create(name='testserver', description='Keine Beschreibung', bind_to=addressport, tun_ip='10.0.0.1', start_on_boot=False, client_ip='10.0.0.2')
 
     def test_key_creation(self):
         key = Tools.create_key()
@@ -48,10 +49,12 @@ class OpenvpnServerTestCase(TestCase):
 
 class OpenvpnClientTestCase(TestCase):
     def setUp(self):
-        OpenvpnServer.objects.create(name='testserver_client', description='Keine Beschreibung', port=1199, tun_ip='10.0.0.1', start_on_boot=False, client_ip='10.0.0.2')
+        server_address_port = AddressPort.objects.create(port=1195)
+        client_address_port = AddressPort.objects.create(port=1196)
+        OpenvpnServer.objects.create(name='testserver_client', description='Keine Beschreibung', bind_to=server_address_port, tun_ip='10.0.0.1', start_on_boot=False, client_ip='10.0.0.2')
         self.server = OpenvpnServer.objects.get(name='testserver_client')
         self.server.control('start')
-        OpenvpnClient.objects.create(name='testclient', description='Keine Beschreibung', port=1198, server_port=1199, tun_ip='10.0.0.2', start_on_boot=False, gateway='localhost', server_ip='10.0.0.1', static_key=self.server.static_key)
+        OpenvpnClient.objects.create(name='testclient', description='Keine Beschreibung', bind_to=client_address_port, server_port=1199, tun_ip='10.0.0.2', start_on_boot=False, gateway='localhost', server_ip='10.0.0.1', static_key=self.server.static_key)
 
     def systemdstatus(self):
         cmd = "systemctl status openvpn@client-testclient"
