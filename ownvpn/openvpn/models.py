@@ -19,7 +19,6 @@ class Tools():
             key = tmpk.readlines()
         os.remove("/tmp/%s.key" % tmpkeyname)
 
-
         return ''.join(key)
 
 
@@ -31,6 +30,9 @@ class Openvpn(models.Model):
     config = models.CharField(max_length=255, blank=True, null=True, editable=False)
     start_on_boot = models.BooleanField(default=False)
 
+    class Meta:
+        abstract = True
+
     def __str__(self):
         return self.name
 
@@ -38,9 +40,6 @@ class Openvpn(models.Model):
         cmd = "sudo /usr/local/bin/controlvpn.sh %s %s" % (self.config, command)
         p = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
         p.wait() 
-
-    def getjson(self):
-        return serializers.serialize("json", self)
 
 class OpenvpnClient(Openvpn):
     gateway = models.CharField(max_length=255)
@@ -95,9 +94,8 @@ class OpenvpnClient(Openvpn):
 
 class OpenvpnServer(Openvpn):
     client_ip = models.GenericIPAddressField()
-    static_key = models.TextField(default=Tools.create_key())
+    static_key = models.TextField(default=Tools.create_key)
     vpn_type = "openvpn_server"
-
 
     def save(self, *args, **kwargs):
         configfile = "/tmp/server-%s.conf" % self.name
