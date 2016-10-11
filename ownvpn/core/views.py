@@ -15,15 +15,22 @@ def list_vpns(request):
             }
     return render_to_response('core/list_vpns.html', context)
 
-def edit_vpn(request, vpn_type, vpn_pk):
+def create_vpn(request, vpn_type):
+    return edit_vpn(request, vpn_type, None)
 
+def edit_vpn(request, vpn_type, vpn_pk):
     if vpn_type == "openvpn_server":
-        vpn = get_object_or_404(OpenvpnServer, pk=vpn_pk)
+        if not vpn_pk:
+            vpn = OpenvpnServer()
+        else:
+            vpn = get_object_or_404(OpenvpnServer, pk=vpn_pk)
         form = OpenvpnServerForm(instance=vpn)
     elif vpn_type == "openvpn_client":
-        vpn = get_object_or_404(OpenvpnClient, pk=vpn_pk)
+        if not vpn_pk:
+            vpn = OpenvpnClient()
+        else:
+            vpn = get_object_or_404(OpenvpnClient, pk=vpn_pk)
         form = OpenvpnClientForm(instance=vpn)
-
 
     context = {
             'form': form,
