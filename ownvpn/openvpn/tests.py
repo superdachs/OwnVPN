@@ -51,7 +51,7 @@ class OpenvpnClientTestCase(TestCase):
         OpenvpnServer.objects.create(name='testserver_client', description='Keine Beschreibung', port=1199, tun_ip='10.0.0.1', start_on_boot=False, client_ip='10.0.0.2')
         self.server = OpenvpnServer.objects.get(name='testserver_client')
         self.server.control('start')
-        OpenvpnClient.objects.create(name='testclient', description='Keine Beschreibung', port=1199, local_port=1194, tun_ip='10.0.0.2', start_on_boot=False, gateway='localhost', server_ip='10.0.0.1', static_key=self.server.static_key)
+        OpenvpnClient.objects.create(name='testclient', description='Keine Beschreibung', port=1198, server_port=1199, tun_ip='10.0.0.2', start_on_boot=False, gateway='localhost', server_ip='10.0.0.1', static_key=self.server.static_key)
 
     def systemdstatus(self):
         cmd = "systemctl status openvpn@client-testclient"
