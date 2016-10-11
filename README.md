@@ -1,13 +1,16 @@
 # OwnVPN
 Webfrontend for VPN Gateway 
 
-'''Features'''
-- multiple VPN Clients and Servers
-- IP Configuration
-- Start/Stop VPNs
-- Make VPNs persistant
-....
+supports only static clients and servers
+gui incomplete
+
+for testing use vagrant
+application lives under /vagrant/ownvpn
+init with:
+./managy.py migrate
+./manage.py createsuperuser
 
 
-automatic key generation 
-only static keys at the moment
+run unittests in vagrant
+manage.py test
+
