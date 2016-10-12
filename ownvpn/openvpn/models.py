@@ -40,9 +40,6 @@ class Openvpn(models.Model):
     start_on_boot = models.BooleanField(default=False)
     bind_to = models.OneToOneField('AddressPort')
 
-    class Meta:
-        abstract = True
-
     def __str__(self):
         return self.name
 
