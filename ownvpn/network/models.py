@@ -8,19 +8,28 @@ class Tools:
         all_nics = netifaces.interfaces()
         physical_nics = []
         for nic in all_nics:
-            cmd = "ethtool -i %s | grep bus-info"
+            cmd = "ethtool -i %s | grep bus-info" % nic
             p = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
             out, err = p.communicate()
             p.wait()
-            if b"N/A" not in out and b"No such device" not in out:
+            print("out: %s" % out)
+            if b"N/A" not in out and out != b'':
                 physical_nics.append(nic)
 
         return physical_nics
-        
+
+    def nic_choices():
+        nics = Tools.list_physical_nics()
+        choices = []
+        for nic in nics:
+            choices.append((nic, nic))
+        return choices
+
+       
 class Interface(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
-    dev_name = models.CharField(max_length=10, unique=True)
+    dev_name = models.CharField(max_length=10, unique=True, choices=Tools.nic_choices())
     ip_address = models.GenericIPAddressField(null=True, blank=True)
     netmask = models.GenericIPAddressField(null=True, blank=True)
     dhcp = models.BooleanField(default=True)
