@@ -40,7 +40,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'core',
     'openvpn',
+    'network',
 ]
+
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
