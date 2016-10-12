@@ -1,6 +1,22 @@
 from django.db import models
+import netifaces
+import subprocess
 
+class Tools:
+    
+    def list_physical_nics():
+        all_nics = netifaces.interfaces()
+        physical_nics = []
+        for nic in all_nics:
+            cmd = "ethtool -i %s | grep bus-info"
+            p = subprocess.Popen(stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
+            out, err = p.communicate()
+            p.wait()
+            if "N/A" not in out:
+                physical_nics.append(nic)
 
+        return physical_nics
+        
 class Interface(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
