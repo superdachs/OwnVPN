@@ -9,10 +9,10 @@ class Tools:
         physical_nics = []
         for nic in all_nics:
             cmd = "ethtool -i %s | grep bus-info"
-            p = subprocess.Popen(stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
+            p = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
             out, err = p.communicate()
             p.wait()
-            if "N/A" not in out:
+            if b"N/A" not in out and b"No such device" not in out:
                 physical_nics.append(nic)
 
         return physical_nics
