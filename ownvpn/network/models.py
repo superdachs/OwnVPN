@@ -32,6 +32,17 @@ class Tools:
         address = addresses[netifaces.AF_INET][0]
         return address['addr'], address['netmask']
 
+    def save_config():
+        interfaces = Interface.objects.all()
+        for iface in interfaces:
+            configblock = []
+            configblock.append("# cnfiguration for %s" % iface.dev_name)
+            configblock.append("auto %s" % iface.dev_name)
+            #TODO: rest of the configuration
+
+        #TODO: merge for configfile
+
+        #TODO: restart networking service
 
        
 class Interface(models.Model):
