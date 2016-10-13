@@ -22,7 +22,7 @@ class Tools():
         return ''.join(key)
 
 class AddressPort(models.Model):
-    interface = models.ForeignKey('Interface')
+    interface = models.ForeignKey(Interface)
     port = models.IntegerField()
 
     def __str__(self):
@@ -30,7 +30,7 @@ class AddressPort(models.Model):
     
 
     class Meta:
-        unique_together = ('address', 'port')
+        unique_together = ('interface', 'port')
 
 class Openvpn(models.Model):
     name = models.CharField(max_length=255, unique=True)

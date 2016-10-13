@@ -25,15 +25,36 @@ class Tools:
             choices.append((nic, nic))
         return choices
 
+    def get_conf_dhcp(ifname):
+        addresses = netifaces.ifaddresses(ifname)
+        if len(addresses[netifaces.AF_INET]) == 0:
+            raise Exception("Not configured")
+        address = addresses[netifaces.AF_INET][0]
+        return address['addr'], address['netmask']
+
+
        
 class Interface(models.Model):
     name = models.CharField(max_length=255)
-    description = models.TextField()
+    description = models.TextField(null=True, blank=True)
     dev_name = models.CharField(max_length=10, unique=True, choices=Tools.nic_choices())
     ip_address = models.GenericIPAddressField(null=True, blank=True)
     netmask = models.GenericIPAddressField(null=True, blank=True)
+    gateway = models.GenericIPAddressField(null=True, blank=True)
     dhcp = models.BooleanField(default=True)
     is_wlan_nic = models.BooleanField(default=False)
+
+
+    @classmethod
+    def from_db(cls, *args, **kwargs):
+        instance = super(Interface, cls).from_db(*args, **kwargs)
+        if instance.dhcp:
+            instance.ip_address, instance.netmask = Tools.get_conf_dhcp(instance.dev_name)
+
+
+        return instance
+
+
 
     def __str__(self):
         return "%s (%s)" % (self.name, self.dev_name)

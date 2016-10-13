@@ -6,8 +6,9 @@ import subprocess
 
 class OpenvpnServerTestCase(TestCase):
     def setUp(self):
-        interface = Interface.objects.create()
-        addressport = AddressPort.objects.create(port=1194)
+        interface = Interface(name='test', dev_name='eth0')
+        interface.save()
+        addressport = AddressPort.objects.create(interface=interface, port=1194)
         OpenvpnServer.objects.create(name='testserver', description='Keine Beschreibung', bind_to=addressport, tun_ip='10.0.0.1', start_on_boot=False, client_ip='10.0.0.2')
 
     def test_key_creation(self):
@@ -51,8 +52,10 @@ class OpenvpnServerTestCase(TestCase):
 
 class OpenvpnClientTestCase(TestCase):
     def setUp(self):
-        server_address_port = AddressPort.objects.create(port=1195)
-        client_address_port = AddressPort.objects.create(port=1196)
+        interface = Interface(name='test', dev_name='eth0')
+        interface.save()
+        server_address_port = AddressPort.objects.create(interface=interface, port=1195)
+        client_address_port = AddressPort.objects.create(interface=interface, port=1196)
         OpenvpnServer.objects.create(name='testserver_client', description='Keine Beschreibung', bind_to=server_address_port, tun_ip='10.0.0.1', start_on_boot=False, client_ip='10.0.0.2')
         self.server = OpenvpnServer.objects.get(name='testserver_client')
         self.server.control('start')
