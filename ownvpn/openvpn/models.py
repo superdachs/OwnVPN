@@ -1,6 +1,6 @@
 from django.db import models
 from django.core import serializers
-
+from network.models import Interface
 import subprocess
 import os
 import uuid
@@ -22,11 +22,11 @@ class Tools():
         return ''.join(key)
 
 class AddressPort(models.Model):
-    address = models.GenericIPAddressField(default='0.0.0.0')
+    interface = models.ForeignKey('Interface')
     port = models.IntegerField()
 
     def __str__(self):
-        return "%s:%d" % (self.address, self.port)
+        return "%s:%d" % (self.interface.address, self.port)
     
 
     class Meta:

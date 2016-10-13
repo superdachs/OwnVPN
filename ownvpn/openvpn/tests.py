@@ -1,10 +1,12 @@
 from django.test import TestCase
 from openvpn.models import OpenvpnServer, OpenvpnClient, AddressPort
 from openvpn.models import Tools
+from network.models import Interface
 import subprocess
 
 class OpenvpnServerTestCase(TestCase):
     def setUp(self):
+        interface = Interface.objects.create()
         addressport = AddressPort.objects.create(port=1194)
         OpenvpnServer.objects.create(name='testserver', description='Keine Beschreibung', bind_to=addressport, tun_ip='10.0.0.1', start_on_boot=False, client_ip='10.0.0.2')
 
